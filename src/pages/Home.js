@@ -4,11 +4,12 @@ import API from '../utils/API';
 import Container from '../components/Container';
 import Row from '../components/Row';
 import Col from '../components/Col';
+import EmployeeTable from '../components/EmployeeTable';
 
 class Home extends React.Component {
 
   state = {
-    employees: ''
+    employees: []
   }
 
   componentDidMount() {
@@ -57,6 +58,8 @@ class Home extends React.Component {
             </Col>
           </Row>
         </Container>
+
+        <EmployeeTable employees={this.state.employees} />
       </div>
     );
   }
