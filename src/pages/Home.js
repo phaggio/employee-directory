@@ -12,9 +12,10 @@ class Home extends React.Component {
 
   state = {
     employees: [],
+    display: [],
     search: '',
-    beginDate: '',
-    endDate: ''
+    beginDate: undefined,
+    endDate: undefined
   }
 
   componentDidMount() {
@@ -27,18 +28,31 @@ class Home extends React.Component {
 
   handleInputChange = event => {
     const targetName = event.target.name;
+    let value = undefined;
+    if (event.target.value) {
+      value = event.target.value;
+    }
     if (targetName === `beginDate`) {
-      this.setState({ ...this.state, beginDate: event.target.value }, this.consoleInput)
+      this.setState({ ...this.state, beginDate: value }, this.filteredEmployees)
     } else if (targetName === `endDate`) {
-      this.setState({ ...this.state, endDate: event.target.value }, this.consoleInput)
+      this.setState({ ...this.state, endDate: value }, this.filteredEmployees)
     } else {
-      this.setState({ ...this.state, search: event.target.value}, this.consoleInput)
+      this.setState({ ...this.state, search: value.trim().toLowerCase() }, this.filteredEmployees)
     }
   }
 
-  filteredEmployees = employeeObj => {
-    const name = `${employeeObj.name.first} ${employeeObj.name.last}`;
-    if (name.includes(name)) return employeeObj;
+  filteredEmployees = () => {
+    console.log(this.state.beginDate)
+    let display = this.state.employees.filter(employee => {
+      const name = `${employee.name.first} ${employee.name.last}`.toLowerCase()
+      const employeeDob = new Date(employee.dob.date);
+      const begin = this.state.beginDate === undefined ? new Date(`1900-01-01`) : new Date(this.state.beginDate)
+      const end = this.state.endDate === undefined ? new Date(`2100-01-01`) : new Date(this.state.endDate)
+      if (name.includes(this.state.search) && employeeDob >= begin && employeeDob <= end) {
+        return employee;
+      }
+    })
+    this.setState({ ...this.state, display: display })
   }
 
 
@@ -92,7 +106,7 @@ class Home extends React.Component {
           </Col>
         </Row>
         <Row>
-          <EmployeeTable employees={this.state.employees} />
+          <EmployeeTable employees={this.state.display} />
         </Row>
 
       </Container>
