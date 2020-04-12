@@ -10,7 +10,7 @@ function DropDownGroup(props) {
         aria-haspopup="true"
         aria-expanded="false"
       >
-        Sort by:
+        Sort by:  {props.selectedSortByName}
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {

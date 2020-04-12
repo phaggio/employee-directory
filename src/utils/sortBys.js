@@ -10,11 +10,6 @@ export const sortBys = [
     active: ``
   },
   {
-    name: `Email`,
-    key: `email`,
-    active: ``
-  },
-  {
     name: `DOB`,
     key: `dob`,
     active: ``

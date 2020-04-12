@@ -2,14 +2,14 @@ import React from 'react';
 
 function DateInput(props) {
   return (
-    <>
-    <label>{props.label}</label>
+    <div className="mx-auto">
+    <label className="mr-2">{props.label}</label>
     <input
       type="date"
       name={props.name}
       onChange={props.handleInputChange}
     />
-    </>
+    </div>
   );
 }
 

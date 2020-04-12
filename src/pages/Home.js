@@ -20,16 +20,13 @@ class Home extends React.Component {
     search: ``,
     beginDate: undefined,
     endDate: undefined,
-    sortBy: sortBys
+    sortByArr: sortBys,
+    selectedSortBy: { name: ``, key: `` }
   }
 
   componentDidMount() {
     this.getEmployees();
   }
-
-  handleNameInputChange = event => {
-    this.setState({ search: event.target.value }, this.consoleState);
-  };
 
   handleInputChange = event => {
     const targetName = event.target.name;
@@ -47,12 +44,12 @@ class Home extends React.Component {
 
   matchedEmployee = (employee) => {
     const name = `${employee.firstname} ${employee.lastname}`.toLowerCase()
-      const employeeDob = new Date(employee.dob);
-      const begin = this.state.beginDate === undefined ? new Date(`1900-01-01`) : new Date(this.state.beginDate)
-      const end = this.state.endDate === undefined ? new Date(`2100-01-01`) : new Date(this.state.endDate)
-      if (name.includes(this.state.search) && employeeDob >= begin && employeeDob <= end) {
-        return employee
-      }
+    const employeeDob = new Date(employee.dob);
+    const begin = this.state.beginDate === undefined ? new Date(`1900-01-01`) : new Date(this.state.beginDate)
+    const end = this.state.endDate === undefined ? new Date(`2100-01-01`) : new Date(this.state.endDate)
+    if (name.includes(this.state.search) && employeeDob >= begin && employeeDob <= end) {
+      return employee
+    }
   }
 
   filteredEmployees = () => {
@@ -62,37 +59,44 @@ class Home extends React.Component {
 
 
   updateSortBy = event => {
-    const selectedSortBy = event.target.value;
+    const selectedSortByName = event.target.value;
+    const selectedSortByKey = event.target.dataset.key
     for (const sortBy of sortBys) {
-      if (sortBy.key === selectedSortBy) {
+      if (sortBy.name === selectedSortByName) {
         sortBy.active = `active`;
       } else {
         sortBy.active = ``;
       }
     }
-    this.setState({ ...this.state, sortBy: sortBys}, this.consoleState)
-    this.sortEmployees(selectedSortBy);
+    this.setState({
+      ...this.state,
+      sortByArr: sortBys,
+      selectedSortBy: {
+        name: selectedSortByName,
+        key: selectedSortByKey
+      }
+    }, this.sortEmployees)
   }
 
-  sortEmployees = sortBy => {
-    console.log(sortBy)
-    if (sortBy === `age`)
-    this.state.display.sort(this.compare)
+  sortEmployees = () => {
+    const sortedDisplay = this.state.display.sort(this.compare)
+    this.setState({
+      ...this.state,
+      display: sortedDisplay
+    });
   }
 
   compare = (a, b) => {
-    const aAge = a.age
-    const bAge = b.age
+    const aItem = a[this.state.selectedSortBy.key]
+    const bItem = b[this.state.selectedSortBy.key]
     let comparison = 0
-    if (aAge > bAge) {
+    if (aItem > bItem) {
       comparison = 1;
     } else {
       comparison = -1;
     }
     return comparison;
   }
-
-  consoleState = () => console.log(this.state);
 
   getEmployees = () => {
     API.getEmployees()
@@ -129,27 +133,36 @@ class Home extends React.Component {
         </Row>
         <Row>
           <Col size="md-12">
-            <DropDownGroup sortBys={this.state.sortBy} updateSortBy={this.updateSortBy}/>
-            <QuickSearch
-              name={`search`}
-              label={`Employee Name`}
-              handleNameInputChange={this.handleInputChange}
-            />
-            <DateInput
-              label={`Born after: `}
-              name={`beginDate`}
-              handleInputChange={this.handleInputChange}
-            />
-            <DateInput
-              label={`Born before: `}
-              name={`endDate`}
-              handleInputChange={this.handleInputChange}
-            />
+            <Row>
+              <QuickSearch
+                name={`search`}
+                label={`Employee Name`}
+                handleInputChange={this.handleInputChange}
+              />
+            </Row>
+            <Row>
+              <DateInput
+                label={`Born after:`}
+                name={`beginDate`}
+                handleInputChange={this.handleInputChange}
+              />
+              <DateInput
+                label={`Born before:`}
+                name={`endDate`}
+                handleInputChange={this.handleInputChange}
+              />
+              <DropDownGroup
+                sortBys={this.state.sortByArr}
+                updateSortBy={this.updateSortBy}
+                selectedSortByName={this.state.selectedSortBy.name}
+              />
+            </Row>
+            <Row>
+              <EmployeeTable headerNames={headerNames} employees={this.state.display} />
+            </Row>
           </Col>
         </Row>
-        <Row>
-          <EmployeeTable headerNames={headerNames} employees={this.state.display} />
-        </Row>
+
 
       </Container>
     );
