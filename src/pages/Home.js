@@ -7,6 +7,10 @@ import Col from '../components/Col';
 import QuickSearch from '../components/QuickSearch';
 import EmployeeTable from '../components/EmployeeTable';
 import DateInput from '../components/DateInput'
+import DropDownGroup from '../components/DropDownGroup'
+
+import { headerNames } from '../utils/headerNames';
+import { sortBys } from '../utils/sortBys'
 
 class Home extends React.Component {
 
@@ -15,7 +19,8 @@ class Home extends React.Component {
     display: [],
     search: ``,
     beginDate: undefined,
-    endDate: undefined
+    endDate: undefined,
+    sortBy: sortBys
   }
 
   componentDidMount() {
@@ -53,7 +58,18 @@ class Home extends React.Component {
     this.setState({ ...this.state, display: display })
   }
 
-
+  sortEmployees = event => {
+    console.log(event.target.value)
+    const selectedSortBy = event.target.value;
+    for (const sortBy of sortBys) {
+      if (sortBy.key === selectedSortBy) {
+        sortBy.active = `active`;
+      } else {
+        sortBy.active = ``;
+      }
+    }
+    this.setState({ ...this.state, sortBy: sortBys})
+  }
 
   consoleInput = () => console.log(this.state);
 
@@ -86,6 +102,7 @@ class Home extends React.Component {
               ridiculus mus. Pellentesque et dui id justo finibus sollicitudin
               at et metus.
             </p>
+            <DropDownGroup sortBys={this.state.sortBy} sortEmployees={this.sortEmployees}/>
             <QuickSearch
               name={`search`}
               label={`Employee Name`}
@@ -104,7 +121,7 @@ class Home extends React.Component {
           </Col>
         </Row>
         <Row>
-          <EmployeeTable employees={this.state.display} />
+          <EmployeeTable headerNames={headerNames} employees={this.state.display} />
         </Row>
 
       </Container>
@@ -113,39 +130,5 @@ class Home extends React.Component {
 
 }
 
-// function Home() {
-//   return (
-//     <div>
-//       <Container style={{ marginTop: 30 }}>
-//         <Row>
-//           <Col size="md-12">
-//             <h1>Employee Directory</h1>
-//           </Col>
-//         </Row>
-//         <Row>
-//           <Col size="md-12">
-//             <p>
-//               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-//               aliquet diam tortor, id consequat mauris ullamcorper eu. Orci
-//               varius natoque penatibus et magnis dis parturient montes, nascetur
-//               ridiculus mus. Pellentesque et dui id justo finibus sollicitudin
-//               at et metus. Ut feugiat tellus nec metus commodo, sed suscipit
-//               nisi gravida. Duis eget vestibulum quam, ut porttitor sem. Donec
-//               sagittis mi sollicitudin turpis semper, et interdum risus
-//               lobortis. Vestibulum suscipit nunc non egestas tristique. Proin
-//               hendrerit efficitur malesuada. Mauris lorem urna, sodales accumsan
-//               quam non, tristique tempor erat. Nullam non sem facilisis, tempus
-//               tortor sit amet, volutpat nisl. Ut et turpis non nunc maximus
-//               mollis a vitae tortor. Pellentesque mattis risus ac quam laoreet
-//               cursus. Praesent suscipit orci neque, vestibulum tincidunt augue
-//               tincidunt non. Duis consequat mattis tortor vitae mattis.
-//             </p>
-
-//           </Col>
-//         </Row>
-//       </Container>
-//     </div>
-//   );
-// }
 
 export default Home;
