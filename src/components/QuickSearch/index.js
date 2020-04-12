@@ -11,6 +11,7 @@ function QuickSearch(props) {
           onChange={props.handleNameInputChange}
           type="text"
           className="form-control"
+          placeholder="enter employee name here"
         />
       </div>
     </form>

@@ -28,7 +28,7 @@ class Home extends React.Component {
   }
 
   handleNameInputChange = event => {
-    this.setState({ search: event.target.value }, this.consoleInput);
+    this.setState({ search: event.target.value }, this.consoleState);
   };
 
   handleInputChange = event => {
@@ -45,21 +45,23 @@ class Home extends React.Component {
     }
   }
 
-  filteredEmployees = () => {
-    const display = this.state.employees.filter(employee => {
-      const name = `${employee.name.first} ${employee.name.last}`.toLowerCase()
-      const employeeDob = new Date(employee.dob.date);
+  matchedEmployee = (employee) => {
+    const name = `${employee.firstname} ${employee.lastname}`.toLowerCase()
+      const employeeDob = new Date(employee.dob);
       const begin = this.state.beginDate === undefined ? new Date(`1900-01-01`) : new Date(this.state.beginDate)
       const end = this.state.endDate === undefined ? new Date(`2100-01-01`) : new Date(this.state.endDate)
       if (name.includes(this.state.search) && employeeDob >= begin && employeeDob <= end) {
-        return employee;
+        return employee
       }
-    })
+  }
+
+  filteredEmployees = () => {
+    const display = this.state.employees.filter(this.matchedEmployee)
     this.setState({ ...this.state, display: display })
   }
 
-  sortEmployees = event => {
-    console.log(event.target.value)
+
+  updateSortBy = event => {
     const selectedSortBy = event.target.value;
     for (const sortBy of sortBys) {
       if (sortBy.key === selectedSortBy) {
@@ -68,19 +70,51 @@ class Home extends React.Component {
         sortBy.active = ``;
       }
     }
-    this.setState({ ...this.state, sortBy: sortBys})
+    this.setState({ ...this.state, sortBy: sortBys}, this.consoleState)
+    this.sortEmployees(selectedSortBy);
   }
 
-  consoleInput = () => console.log(this.state);
+  sortEmployees = sortBy => {
+    console.log(sortBy)
+    if (sortBy === `age`)
+    this.state.display.sort(this.compare)
+  }
+
+  compare = (a, b) => {
+    const aAge = a.age
+    const bAge = b.age
+    let comparison = 0
+    if (aAge > bAge) {
+      comparison = 1;
+    } else {
+      comparison = -1;
+    }
+    return comparison;
+  }
+
+  consoleState = () => console.log(this.state);
 
   getEmployees = () => {
     API.getEmployees()
       .then(res => {
+        const revisedRes = [];
+        for (const obj of res.data.results) {
+          const item = {
+            id: obj.id.value,
+            image: obj.picture.medium,
+            firstname: obj.name.first,
+            lastname: obj.name.last,
+            phone: obj.phone,
+            email: obj.email,
+            dob: obj.dob.date,
+            age: obj.dob.age
+          }
+          revisedRes.push(item);
+        }
         this.setState({
-          employees: res.data.results,
-          display: res.data.results
+          employees: revisedRes,
+          display: revisedRes
         });
-        console.log(this.state.employees);
       })
       .catch(err => console.log(err));
   };
@@ -95,14 +129,7 @@ class Home extends React.Component {
         </Row>
         <Row>
           <Col size="md-12">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-              aliquet diam tortor, id consequat mauris ullamcorper eu. Orci
-              varius natoque penatibus et magnis dis parturient montes, nascetur
-              ridiculus mus. Pellentesque et dui id justo finibus sollicitudin
-              at et metus.
-            </p>
-            <DropDownGroup sortBys={this.state.sortBy} sortEmployees={this.sortEmployees}/>
+            <DropDownGroup sortBys={this.state.sortBy} updateSortBy={this.updateSortBy}/>
             <QuickSearch
               name={`search`}
               label={`Employee Name`}

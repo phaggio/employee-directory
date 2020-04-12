@@ -1,7 +1,12 @@
 export const sortBys = [
   {
-    name: `Name`,
-    key: `name`,
+    name: `First Name`,
+    key: `firstname`,
+    active: ``
+  },
+  {
+    name: `Last Name`,
+    key: `lastname`,
     active: ``
   },
   {

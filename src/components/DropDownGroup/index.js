@@ -14,7 +14,7 @@ function DropDownGroup(props) {
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {
-          <DropDownButton sortBys={props.sortBys} onClick={props.sortEmployees}/>
+          <DropDownButton sortBys={props.sortBys} onClick={props.updateSortBy}/>
         }
       </div>
     </div>
