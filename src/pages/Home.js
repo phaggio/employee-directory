@@ -13,7 +13,7 @@ class Home extends React.Component {
   state = {
     employees: [],
     display: [],
-    search: '',
+    search: ``,
     beginDate: undefined,
     endDate: undefined
   }
@@ -28,22 +28,20 @@ class Home extends React.Component {
 
   handleInputChange = event => {
     const targetName = event.target.name;
-    let value = undefined;
-    if (event.target.value) {
-      value = event.target.value;
-    }
     if (targetName === `beginDate`) {
+      const value = event.target.value ? event.target.value : `0001-01-01`;
       this.setState({ ...this.state, beginDate: value }, this.filteredEmployees)
     } else if (targetName === `endDate`) {
+      const value = event.target.value ? event.target.value : `2999-12-31`;
       this.setState({ ...this.state, endDate: value }, this.filteredEmployees)
     } else {
+      const value = event.target.value ? event.target.value.trim() : ``;
       this.setState({ ...this.state, search: value.trim().toLowerCase() }, this.filteredEmployees)
     }
   }
 
   filteredEmployees = () => {
-    console.log(this.state.beginDate)
-    let display = this.state.employees.filter(employee => {
+    const display = this.state.employees.filter(employee => {
       const name = `${employee.name.first} ${employee.name.last}`.toLowerCase()
       const employeeDob = new Date(employee.dob.date);
       const begin = this.state.beginDate === undefined ? new Date(`1900-01-01`) : new Date(this.state.beginDate)
