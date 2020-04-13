@@ -7,6 +7,9 @@ Link to repo: https://github.com/phaggio/employee-directory
 
 Link to application: https://phaggio.github.io/employee-directory/
 
+<img src="https://github.com/phaggio/employee-directory/blob/master/screenshots/screenshot.png?raw=true" alt="screenshot" width="600">
+
+
 ## Technologies
 * javascript
 * Node
